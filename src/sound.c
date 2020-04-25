@@ -201,7 +201,7 @@ void sound_write_signal_sequence(const char * const opc_File, const int32_t os32
    fprintf(pv_File, "const uint16_t gau16_SoundSequence[] = { //2x16-bit value pair : Duration [1ms], Frequeny [1Hz]\n");
    for (s32_Count = 0; s32_Count < os32_Length; ++s32_Count)
    {
-      fprintf(pv_File, " %d, %d, ", opt_SignalSequence->u16_Duration1ms, opt_SignalSequence->u16_Frequency1Hz);
+      fprintf(pv_File, "  %d, %d, ", opt_SignalSequence->u16_Duration1ms, opt_SignalSequence->u16_Frequency1Hz);
       if ((s32_Count % 8) == 7)
       {
          fprintf(pv_File, "\n");

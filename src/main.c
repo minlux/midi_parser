@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include "midi.h"
 #include "midi_event.h"
 #include "sound.h"
@@ -10,7 +11,8 @@
 
 int main(int argc, char ** argv)
 {
-   const char * pcn_Filename = "../result/demo.midi";
+   const char * inputFile = NULL;
+   const char * outputFile = NULL;
    T_midi_header_chunk t_HeaderChunk;
    T_midi_track_chunk t_TrackChunk;
    T_MIDI_HANDLE pv_Midi;
@@ -22,15 +24,32 @@ int main(int argc, char ** argv)
    T_sound_signal * pt_SignalSequence;
    int32_t s32_SignalSequence;
 
-//   printf("Current directory: %s\n", get_current_dir_name()); //print binary
-   //overwrite default input with the one specified at command line
-   if (argc >= 2)
+   //get input and output file from command line arguments
+   for (int i = 1; i < (argc - 1); ++i)
    {
-      pcn_Filename = argv[1]; //1st argument assumed as input filename
+      //input file
+      if (strcmp(argv[i], "-i") == 0)
+      {
+         inputFile = argv[i + 1];
+      }
+      //output file
+      if (strcmp(argv[i], "-o") == 0)
+      {
+         outputFile = argv[i + 1];
+      }
+   }
+   if (inputFile == NULL)
+   {
+      printf("Usage:\n");
+      printf(" %s -i <input> [-o <output>]:\n\n", argv[0]);
+      return -1;
    }
 
+
+
+
    //open midi
-   pv_Midi = midi_open(pcn_Filename);
+   pv_Midi = midi_open(inputFile);
    if (pv_Midi != 0)
    {
       //midi header
@@ -64,8 +83,11 @@ int main(int argc, char ** argv)
                s32_SignalSequence = sound_get_signal_sequence(pv_Sound, &pt_SignalSequence);
                if (s32_SignalSequence > 0)
                {
-                  sound_print_signal_sequence(s32_SignalSequence, pt_SignalSequence);
-                  sound_write_signal_sequence("../result/out.c", s32_SignalSequence, pt_SignalSequence);
+                  // sound_print_signal_sequence(s32_SignalSequence, pt_SignalSequence);
+                  if (outputFile != NULL)
+                  {
+                     sound_write_signal_sequence(outputFile, s32_SignalSequence, pt_SignalSequence);
+                  }
                }
                sound_close(pv_Sound);
             }
